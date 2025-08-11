@@ -1,6 +1,9 @@
-import { ChevronRight } from 'lucide-react';
-import type * as React from 'react';
+'use client';
 
+import { ChevronRight } from 'lucide-react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import type * as React from 'react';
 import { SearchForm } from '@/components/search-form';
 import {
   Collapsible,
@@ -20,22 +23,27 @@ import {
   SidebarRail,
 } from '@/components/ui/sidebar';
 import { VersionSwitcher } from '@/components/version-switcher';
+import { cn } from '@/lib/utils';
 
 // This is sample data.
 const data = {
   versions: ['1.0.1', '1.1.0-alpha', '2.0.0-beta1'],
   navMain: [
     {
-      title: 'Getting Started',
+      title: 'Foods Management',
       url: '#',
       items: [
         {
-          title: 'Installation',
-          url: '#',
+          title: 'Foods',
+          url: '/admin/foods-management/foods',
         },
         {
-          title: 'Project Structure',
-          url: '#',
+          title: 'Categories',
+          url: '/admin/foods-management/categories',
+        },
+        {
+          title: 'Serving Units',
+          url: '/admin/foods-management/serving-units',
         },
       ],
     },
@@ -50,7 +58,6 @@ const data = {
         {
           title: 'Data Fetching',
           url: '#',
-          isActive: true,
         },
         {
           title: 'Rendering',
@@ -164,6 +171,8 @@ const data = {
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const pathname = usePathname();
+
   return (
     <Sidebar {...props}>
       <SidebarHeader>
@@ -197,8 +206,15 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   <SidebarMenu>
                     {item.items.map((item) => (
                       <SidebarMenuItem key={item.title}>
-                        <SidebarMenuButton asChild isActive={item.isActive}>
-                          <a href={item.url}>{item.title}</a>
+                        <SidebarMenuButton
+                          asChild
+                          className={cn(
+                            pathname === item.url
+                              ? 'bg-primary font-medium text-white duration-300 hover:bg-primary hover:text-white'
+                              : ''
+                          )}
+                        >
+                          <Link href={item.url}>{item.title}</Link>
                         </SidebarMenuButton>
                       </SidebarMenuItem>
                     ))}
