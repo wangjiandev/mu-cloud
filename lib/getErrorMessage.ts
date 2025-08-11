@@ -1,4 +1,4 @@
-import AuthError from 'next-auth';
+import { AuthError } from 'next-auth';
 import { ZodError } from 'zod';
 import { fromError } from 'zod-validation-error';
 import { Prisma } from '@/generated/prisma';

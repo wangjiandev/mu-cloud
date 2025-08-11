@@ -2,6 +2,7 @@
 
 import { Edit, Trash } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { alert } from '@/lib/use-global-store';
 import { useCategoryDelete } from '../_service/use-category-mutations';
 import { useCategoryQueries } from '../_service/use-category-queries';
 
@@ -25,7 +26,14 @@ const CategoryCard = () => {
               <Edit className="size-4" />
             </Button>
             <Button
-              onClick={() => deleteCategory.mutate(category.id)}
+              onClick={() => {
+                alert({
+                  title: 'Delete Category',
+                  description: `Are you sure you want to delete ${category.name}?`,
+                  confirmLabel: 'Delete',
+                  onConfirm: () => deleteCategory.mutate(category.id),
+                });
+              }}
               size="icon"
               variant="ghost"
             >

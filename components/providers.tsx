@@ -1,6 +1,7 @@
 'use client';
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { AlertDialogProvider } from '@/components/alert-dialog-provider';
 import { ThemeProvider } from '@/components/theme-provider';
 import { Toaster } from '@/components/ui/sonner';
 
@@ -16,6 +17,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
         enableSystem
       >
         <Toaster />
+        <AlertDialogProvider />
         {children}
       </ThemeProvider>
     </QueryClientProvider>
