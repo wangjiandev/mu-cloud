@@ -1,0 +1,116 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// 用户模型
+model User {
+  id        Int      @id @default(autoincrement()) // 用户ID,自增主键
+  email     String   @unique // 用户邮箱,唯一
+  name      String? // 用户名,可选
+  password  String // 用户密码
+  role      Role     @default(USER) // 用户角色
+  meal      Meal[] // 关联的餐次列表
+  createdAt DateTime @default(now()) // 创建时间,默认为当前时间
+  updatedAt DateTime @updatedAt // 更新时间,自动更新
+}
+
+enum Role {
+  ADMIN
+  USER
+}
+
+// 食物模型
+model Food {
+  id              Int               @id @default(autoincrement()) // 食物ID,自增主键
+  name            String            @unique // 食物名称,唯一
+  calories        Float? // 卡路里含量（可选）
+  protein         Float? // 蛋白质含量（克,可选）
+  fat             Float? // 脂肪含量（克,可选）
+  carbohydrates   Float? // 碳水化合物含量（克,可选）
+  fiber           Float? // 纤维含量（克,可选）
+  sugar           Float? // 糖含量（克,可选）
+  createdAt       DateTime          @default(now()) // 创建时间,默认为当前时间
+  updatedAt       DateTime          @updatedAt // 更新时间,自动更新
+  category        Category?         @relation(fields: [categoryId], references: [id]) // 关联的食物类别
+  categoryId      Int? // 类别ID外键（可选）
+  foodServingUnit FoodServingUnit[]
+  meal            Meal?             @relation(fields: [mealId], references: [id]) // 关联的餐次
+  mealId          Int? // 餐次ID外键（可选）
+  mealFood        MealFood[] // 关联的餐次食物列表
+}
+
+// 食物类别模型
+model Category {
+  id        Int      @id @default(autoincrement()) // 类别ID,自增主键
+  name      String   @unique // 类别名称,唯一
+  createdAt DateTime @default(now()) // 创建时间,默认为当前时间
+  updatedAt DateTime @updatedAt // 更新时间,自动更新
+
+  foods Food[] // 关联的食物列表
+}
+
+// 份量单位模型
+model ServingUnit {
+  id              Int               @id @default(autoincrement()) // 份量单位ID,自增主键
+  name            String            @unique // 份量单位名称,唯一
+  createdAt       DateTime          @default(now()) // 创建时间,默认为当前时间
+  updatedAt       DateTime          @updatedAt // 更新时间,自动更新
+  foodServingUnit FoodServingUnit[] // 关联的食物份量单位列表
+  mealFood        MealFood[] // 关联的餐次食物列表
+}
+
+// 食物份量单位模型
+model FoodServingUnit {
+  id            Int         @id @default(autoincrement()) // 食物份量单位ID,自增主键
+  food          Food        @relation(fields: [foodId], references: [id]) // 关联的食物
+  foodId        Int // 食物ID外键
+  servingUnit   ServingUnit @relation(fields: [servingUnitId], references: [id]) // 关联的份量单位
+  servingUnitId Int // 份量单位ID外键
+
+  grams     Float? // 克数（可选）
+  createdAt DateTime @default(now()) // 创建时间,默认为当前时间
+  updatedAt DateTime @updatedAt // 更新时间,自动更新
+}
+
+// 餐次模型
+model Meal {
+  id Int @id @default(autoincrement()) // 餐次ID,自增主键
+
+  foods     Food[] // 关联的食物列表
+  user      User       @relation(fields: [userId], references: [id]) // 关联的用户
+  userId    Int // 用户ID外键
+  createdAt DateTime   @default(now()) // 创建时间,默认为当前时间
+  updatedAt DateTime   @updatedAt // 更新时间,自动更新
+  mealFood  MealFood[] // 关联的餐次食物列表
+}
+
+// 餐次食物模型
+model MealFood {
+  id Int @id @default(autoincrement()) // 餐次食物ID,自增主键
+
+  food   Food @relation(fields: [foodId], references: [id]) // 关联的食物
+  foodId Int // 食物ID外键
+
+  meal   Meal @relation(fields: [mealId], references: [id]) // 关联的餐次
+  mealId Int // 餐次ID外键
+
+  servingUnit   ServingUnit @relation(fields: [servingUnitId], references: [id]) // 关联的份量单位
+  servingUnitId Int // 份量单位ID外键
+
+  amount Float // 份量
+
+  createdAt DateTime @default(now()) // 创建时间,默认为当前时间
+  updatedAt DateTime @updatedAt // 更新时间,自动更新
+}
