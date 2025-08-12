@@ -42,7 +42,10 @@ export const AlertDialogProvider = () => {
           <AlertDialogCancel onClick={handleCancel}>
             {alertConfig.cancelLabel || 'Cancel'}
           </AlertDialogCancel>
-          <AlertDialogAction onClick={handleConfirm}>
+          <AlertDialogAction
+            className="bg-red-500 text-white hover:bg-red-600"
+            onClick={handleConfirm}
+          >
             {alertConfig.confirmLabel || 'Confirm'}
           </AlertDialogAction>
         </AlertDialogFooter>
