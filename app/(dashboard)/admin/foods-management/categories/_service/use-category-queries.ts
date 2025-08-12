@@ -1,9 +1,19 @@
 import { useQuery } from '@tanstack/react-query';
-import { getCategories } from './categoryQueries';
+import { useCategoryStore } from '../_lib/use-category-store';
+import { getCategories, getCategoryById } from './categoryQueries';
 
-export const useCategoryQueries = () => {
+export const useCategories = () => {
   return useQuery({
     queryKey: ['categories'],
     queryFn: getCategories,
+  });
+};
+
+export const useCategory = () => {
+  const { selectedCategoryId } = useCategoryStore();
+  return useQuery({
+    queryKey: ['category', { selectedCategoryId }],
+    queryFn: () => getCategoryById(selectedCategoryId!),
+    enabled: !!selectedCategoryId,
   });
 };

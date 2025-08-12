@@ -1,14 +1,31 @@
 'use client';
 
 import { Edit, Trash } from 'lucide-react';
+import { NoItemsFound } from '@/components/no-items-found';
 import { Button } from '@/components/ui/button';
 import { alert } from '@/lib/use-global-store';
+import { useCategoryStore } from '../_lib/use-category-store';
 import { useCategoryDelete } from '../_service/use-category-mutations';
-import { useCategoryQueries } from '../_service/use-category-queries';
+import { useCategories } from '../_service/use-category-queries';
+import { CategoryCardsSkeleton } from './CategoryCardsSkeleton';
 
 const CategoryCard = () => {
-  const categories = useCategoryQueries();
+  const { updateSelectedCategoryId, updateCategoryDialogOpen } =
+    useCategoryStore();
+
+  const categories = useCategories();
   const deleteCategory = useCategoryDelete();
+
+  if (categories.isLoading) return <CategoryCardsSkeleton />;
+  if (categories.data?.length === 0)
+    return (
+      <NoItemsFound
+        onClick={() => {
+          updateSelectedCategoryId(null);
+          updateCategoryDialogOpen(true);
+        }}
+      />
+    );
   return (
     <div className="grid grid-cols-4 gap-2">
       {categories.data?.map((category) => (
@@ -19,7 +36,10 @@ const CategoryCard = () => {
           <p className="truncate">{category.name}</p>
           <div className="flex gap-1">
             <Button
-              onClick={() => deleteCategory.mutate(category.id)}
+              onClick={() => {
+                updateSelectedCategoryId(category.id);
+                updateCategoryDialogOpen(true);
+              }}
               size="icon"
               variant="ghost"
             >

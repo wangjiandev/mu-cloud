@@ -5,7 +5,9 @@
     "rules": {
       "a11y": "off",
       "style": {
-        "useBlockStatements": "off"
+        "useBlockStatements": "off",
+        "noNonNullAssertion": "off",
+        "useConsistentBuiltinInstantiation": "off"
       },
       "performance": {
         "noNamespaceImport": "off"
